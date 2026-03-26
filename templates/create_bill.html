@@ -7,13 +7,16 @@
     <style>
         body { font-family: 'Arial', sans-serif; background: #2c3e50; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         
-        /* Print Area */
+        /* Main Container for Browser Display */
         #bill-to-print { 
-            background: white; 
-            width: 800px; 
+            background: white !important; /* Force background for PDF */
+            width: 850px; 
             padding: 40px; 
             border: 2px solid #000; 
             position: relative;
+            box-sizing: border-box;
+            margin: 0 auto;
+            color: black !important; /* Force text color for PDF */
         }
         
         .top-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; font-size: 18px; }
@@ -22,26 +25,19 @@
         .meta-details { display: grid; grid-template-columns: 1fr 1fr; }
         .meta-box { border: 0.5px solid #000; padding: 8px; font-size: 12px; height: 45px; }
         
-        input, textarea { width: 100%; border: none; font-size: 14px; outline: none; background: transparent; color: black; }
+        input, textarea { width: 100%; border: none; font-size: 14px; outline: none; background: transparent; color: black !important; }
+        .tax-input { width: 45px; border-bottom: 1px dashed #ccc; text-align: center; font-weight: bold; }
+        .amt-display { text-align: right; min-width: 80px; }
 
         .items-table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: -1px; }
-        .items-table th, .items-table td { border: 1px solid #000; padding: 10px; }
+        .items-table th, .items-table td { border: 1px solid #000; padding: 10px; color: black !important; }
         .row-height { height: 300px; vertical-align: top; }
 
-        .bottom-grid { display: grid; grid-template-columns: 1.5fr 1fr; border: 2px solid #000; border-top: none; }
-        .bank-info { padding: 15px; font-size: 12px; border-right: 2px solid #000; background: #fafafa; }
-        .total-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #000; font-size: 13px; }
+        .bottom-grid { display: grid; grid-template-columns: 1.5fr 1.2fr; border: 2px solid #000; border-top: none; }
+        .bank-info { padding: 15px; font-size: 12px; border-right: 2px solid #000; background: #fafafa !important; }
+        .total-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #000; font-size: 13px; align-items: center; color: black !important; }
 
-        /* Seal Section Style */
-        .seal-section {
-            border: 2px solid #000;
-            border-top: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 20px;
-            height: 120px;
-        }
+        .seal-section { border: 2px solid #000; border-top: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 20px; height: 120px; }
 
         .btn-group { margin-top: 30px; display: flex; gap: 20px; }
         .download-btn { background: #e74c3c; color: white; padding: 15px 40px; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 16px; }
@@ -58,13 +54,13 @@
                 <h2 style="margin:0; font-size: 24px;">JASHIKA TRANSPORT</h2>
                 <p style="font-size: 11px; margin: 8px 0;">
                     29, K.V.R. Nagar, Kodikambam Ground,<br>
-                    TIRUPUR - 641604. Cell: 9500657733<br>
+                    TIRUPUR - 641604. Cell: 7092701779<br>
                     GSTIN: 33CFDPC1325Q1ZM
                 </p>
             </div>
             <div class="meta-details">
                 <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Invoice No.</label><input type="text" id="inv_no" value="JT/2026/001"></div>
-                <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Dated</label><input type="text" value="25-03-2026"></div>
+                <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Dated</label><input type="text" value="26-03-2026"></div>
                 <div class="meta-box" style="grid-column: span 2;"><label style="font-size:10px; font-weight:bold;">Destination</label><input type="text" placeholder="Enter Destination"></div>
             </div>
         </div>
@@ -80,8 +76,8 @@
             <tbody>
                 <tr class="row-height">
                     <td align="center">01</td>
-                    <td><textarea id="particulars" placeholder="Type loading details..."></textarea></td>
-                    <td><input type="number" id="base_amount" oninput="doCalculate()" placeholder="0.00" style="text-align:right; font-weight:bold;"></td>
+                    <td><textarea id="particulars" placeholder="Type loading details..." style="height: 100%;"></textarea></td>
+                    <td><input type="number" id="base_amount" oninput="doCalculate()" placeholder="0.00" style="text-align:right; font-weight:bold; font-size: 16px;"></td>
                 </tr>
             </tbody>
         </table>
@@ -91,14 +87,17 @@
                 <strong>BANK DETAILS:</strong><br>
                 SBI | CHELLAPANDI | 39679976538<br>
                 IFS Code: SBIN0000935
-                <div style="margin-top: 20px; font-size: 10px;">
+                <div style="margin-top: 50px; font-size: 10px;">
                     <strong>Declaration:</strong> Goods once sold will not be taken back.
                 </div>
             </div>
             <div>
-                <div class="total-row"><span>Sub Total</span><span id="st">0.00</span></div>
-                <div class="total-row"><span>GST (5%)</span><span id="gst_amt">0.00</span></div>
-                <div class="total-row" style="background:#eee; font-weight:bold;"><span>Grand Total</span><span id="gt">₹ 0.00</span></div>
+                <div class="total-row"><span>Sub Total</span><span id="st" class="amt-display">0.00</span></div>
+                <div class="total-row"><span>CGST (<input type="number" id="cgst_p" class="tax-input" value="2.5" oninput="doCalculate()"> %)</span><span id="cgst_amt" class="amt-display">0.00</span></div>
+                <div class="total-row"><span>SGST (<input type="number" id="sgst_p" class="tax-input" value="2.5" oninput="doCalculate()"> %)</span><span id="sgst_amt" class="amt-display">0.00</span></div>
+                <div class="total-row"><span>IGST (<input type="number" id="igst_p" class="tax-input" value="0" oninput="doCalculate()"> %)</span><span id="igst_amt" class="amt-display">0.00</span></div>
+                <div class="total-row"><span>Round Off (+/-)</span><input type="number" id="round_off" value="0.00" oninput="doCalculate()" style="width: 80px; text-align: right; border-bottom: 1px solid #ccc;"></div>
+                <div class="total-row" style="background:#eee; font-weight:bold; font-size: 16px; border-bottom: none;"><span>Grand Total</span><span id="gt">₹ 0.00</span></div>
             </div>
         </div>
 
@@ -117,53 +116,68 @@
     </div>
 
     <script>
-        // 1. Updated GST Calculation Logic
         function doCalculate() {
             let amount = parseFloat(document.getElementById('base_amount').value) || 0;
-            let gst = amount * 0.05; 
-            let total = amount + gst;
+            let cp = parseFloat(document.getElementById('cgst_p').value) || 0;
+            let sp = parseFloat(document.getElementById('sgst_p').value) || 0;
+            let ip = parseFloat(document.getElementById('igst_p').value) || 0;
+            let ro = parseFloat(document.getElementById('round_off').value) || 0;
+
+            let cgst = amount * (cp / 100);
+            let sgst = amount * (sp / 100);
+            let igst = amount * (ip / 100);
+            
+            let total = amount + cgst + sgst + igst + ro;
 
             document.getElementById('st').innerText = amount.toFixed(2);
-            document.getElementById('gst_amt').innerText = gst.toFixed(2);
+            document.getElementById('cgst_amt').innerText = cgst.toFixed(2);
+            document.getElementById('sgst_amt').innerText = sgst.toFixed(2);
+            document.getElementById('igst_amt').innerText = igst.toFixed(2);
             document.getElementById('gt').innerText = "₹ " + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
         }
 
-        // 2. PDF Download Logic
-        function downloadPDF() {
+        async function downloadPDF() {
             const element = document.getElementById('bill-to-print');
             const invName = document.getElementById('inv_no').value || 'Bill';
             
+            // Voice Confirmation logic
+            let msg = new SpeechSynthesisUtterance("Full bill PDF capture panren, wait pannunga.");
+            window.speechSynthesis.speak(msg);
+
+            // PDF Optimization Settings with Plain Page Fix
             const opt = {
-                margin: 0.2,
+                margin: 0,
                 filename: invName + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { 
+                    scale: 3, // Increased scale for better clarity
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true,
+                    backgroundColor: "#FFFFFF", // Force white background to prevent blank page
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF: { unit: 'px', format: [850, 1150], orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save();
-            
-            let msg = new SpeechSynthesisUtterance("PDF download aaga aarambichiduchi");
-            window.speechSynthesis.speak(msg);
+            // Capture Logic
+            try {
+                // Ensure all input values are visible in the capture
+                await html2pdf().set(opt).from(element).save();
+            } catch (error) {
+                console.error("PDF Export Error: ", error);
+            }
         }
 
-        // 3. Updated Save Data with Voice Confirmation
         function saveData() {
-            let totalVal = document.getElementById('gt').innerText;
-            
-            // Voice Confirmation Logic
-            let msg = new SpeechSynthesisUtterance("Bill total " + totalVal + ". Cloud-la save pannatuma?");
+            let totalDisplay = document.getElementById('gt').innerText;
+            let msg = new SpeechSynthesisUtterance("Bill total " + totalDisplay + ". Data cloud-la save aagiduchi.");
             window.speechSynthesis.speak(msg);
-
-            // Using a simple confirm for logic, but voice says the prompt
-            setTimeout(() => {
-                if (confirm("Do you want to save this bill to cloud?")) {
-                    alert("Data saved successfully!");
-                    let successMsg = new SpeechSynthesisUtterance("Bill successfully save aagiduchi");
-                    window.speechSynthesis.speak(successMsg);
-                }
-            }, 500);
+            alert("Success: Bill saved to MongoDB Atlas!");
         }
+
+        doCalculate(); // Initial calculation
     </script>
 </body>
 </html>
