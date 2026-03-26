@@ -7,23 +7,25 @@
     <style>
         body { font-family: 'Arial', sans-serif; background: #2c3e50; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         
-        /* Main Container for Browser Display */
         #bill-to-print { 
-            background: white !important; /* Force background for PDF */
+            background: white !important; 
             width: 850px; 
             padding: 40px; 
             border: 2px solid #000; 
             position: relative;
             box-sizing: border-box;
             margin: 0 auto;
-            color: black !important; /* Force text color for PDF */
+            color: black !important;
         }
         
         .top-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; font-size: 18px; }
-        .header-grid { display: grid; grid-template-columns: 1.2fr 1fr; border-bottom: 1px solid #000; }
+        .header-grid { display: grid; grid-template-columns: 1.2fr 1fr; border-bottom: 2px solid #000; }
         .company-details { padding: 15px; border-right: 2px solid #000; }
         .meta-details { display: grid; grid-template-columns: 1fr 1fr; }
         .meta-box { border: 0.5px solid #000; padding: 8px; font-size: 12px; height: 45px; }
+        
+        /* New Party Details Section */
+        .party-section { border-bottom: 2px solid #000; padding: 10px 15px; display: flex; flex-direction: column; min-height: 80px; }
         
         input, textarea { width: 100%; border: none; font-size: 14px; outline: none; background: transparent; color: black !important; }
         .tax-input { width: 45px; border-bottom: 1px dashed #ccc; text-align: center; font-weight: bold; }
@@ -36,6 +38,9 @@
         .bottom-grid { display: grid; grid-template-columns: 1.5fr 1.2fr; border: 2px solid #000; border-top: none; }
         .bank-info { padding: 15px; font-size: 12px; border-right: 2px solid #000; background: #fafafa !important; }
         .total-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #000; font-size: 13px; align-items: center; color: black !important; }
+
+        /* New Words Section */
+        .words-section { border: 2px solid #000; border-top: none; padding: 10px 15px; font-size: 13px; font-style: italic; }
 
         .seal-section { border: 2px solid #000; border-top: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 20px; height: 120px; }
 
@@ -62,6 +67,17 @@
                 <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Invoice No.</label><input type="text" id="inv_no" value="JT/2026/001"></div>
                 <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Dated</label><input type="text" value="26-03-2026"></div>
                 <div class="meta-box" style="grid-column: span 2;"><label style="font-size:10px; font-weight:bold;">Destination</label><input type="text" placeholder="Enter Destination"></div>
+            </div>
+        </div>
+
+        <div class="party-section">
+            <div style="display: flex; align-items: flex-start;">
+                <label style="font-weight: bold; width: 60px;">To. M/s.</label>
+                <textarea id="party_details" placeholder="Enter Party Name and Address..." rows="3" style="border-bottom: 1px dashed #ccc;"></textarea>
+            </div>
+            <div style="display: flex; margin-top: 5px;">
+                <label style="font-weight: bold; width: 110px;">Party's GSTIN No.</label>
+                <input type="text" placeholder="Enter GSTIN" style="border-bottom: 1px dashed #ccc;">
             </div>
         </div>
 
@@ -101,6 +117,10 @@
             </div>
         </div>
 
+        <div class="words-section">
+            <strong>Rupees in Words:</strong> <span id="gt_words">Zero Only</span>
+        </div>
+
         <div class="seal-section">
             <div style="font-size: 11px;">Customer's Signature</div>
             <div style="text-align: center; min-width: 200px;">
@@ -116,6 +136,22 @@
     </div>
 
     <script>
+        // Number to Words Converter Function
+        function numberToWords(num) {
+            let ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            let tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            if (num === 0) return 'Zero';
+            function convert(n) {
+                if (n < 20) return ones[n];
+                if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
+                if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
+                if (n < 100000) return convert(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + convert(n % 1000) : '');
+                if (n < 10000000) return convert(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + convert(n % 100000) : '');
+                return '';
+            }
+            return convert(Math.floor(num)) + ' Only';
+        }
+
         function doCalculate() {
             let amount = parseFloat(document.getElementById('base_amount').value) || 0;
             let cp = parseFloat(document.getElementById('cgst_p').value) || 0;
@@ -134,36 +170,35 @@
             document.getElementById('sgst_amt').innerText = sgst.toFixed(2);
             document.getElementById('igst_amt').innerText = igst.toFixed(2);
             document.getElementById('gt').innerText = "₹ " + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            
+            // Update the words display
+            document.getElementById('gt_words').innerText = numberToWords(total);
         }
 
         async function downloadPDF() {
             const element = document.getElementById('bill-to-print');
             const invName = document.getElementById('inv_no').value || 'Bill';
             
-            // Voice Confirmation logic
             let msg = new SpeechSynthesisUtterance("Full bill PDF capture panren, wait pannunga.");
             window.speechSynthesis.speak(msg);
 
-            // PDF Optimization Settings with Plain Page Fix
             const opt = {
                 margin: 0,
                 filename: invName + '.pdf',
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
-                    scale: 3, // Increased scale for better clarity
+                    scale: 3, 
                     useCORS: true, 
                     logging: false,
                     letterRendering: true,
-                    backgroundColor: "#FFFFFF", // Force white background to prevent blank page
+                    backgroundColor: "#FFFFFF",
                     scrollX: 0,
                     scrollY: 0
                 },
                 jsPDF: { unit: 'px', format: [850, 1150], orientation: 'portrait' }
             };
 
-            // Capture Logic
             try {
-                // Ensure all input values are visible in the capture
                 await html2pdf().set(opt).from(element).save();
             } catch (error) {
                 console.error("PDF Export Error: ", error);
@@ -177,7 +212,7 @@
             alert("Success: Bill saved to MongoDB Atlas!");
         }
 
-        doCalculate(); // Initial calculation
+        doCalculate();
     </script>
 </body>
 </html>
