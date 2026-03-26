@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jashika Transport | Premium Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 👇 Deep Dark Background so text is visible even if image fails 👇 */
+            background-color: #000;
+            /* 👇 Updated HD Lorry Link 👇 */
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                               url('https://images.unsplash.com/photo-1591768793355-74d04bb6608f?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .glass-overlay {
+            width: 85%;
+            height: 80vh;
+            /* Dark Glass Effect */
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        /* BRAND NAME UPDATED TO GREEN */
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            color: #2ecc71; /* Neon Green Color */
+            font-size: clamp(3rem, 10vw, 6rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 0.95;
+            text-align: center;
+            margin-bottom: 10px;
+            font-style: italic;
+            text-shadow: 0px 5px 20px rgba(46, 204, 113, 0.3); /* Soft Green Glow */
+        }
+
+        /* SUB TEXT UPDATED TO LIGHT GREEN */
+        .sub-text {
+            color: #a3e4a3; /* Light Green shade */
+            font-size: 0.9rem;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 5px;
+            color: #000;
+        }
+
+        .access-btn {
+            width: 100%;
+            background: #111;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .access-btn:hover {
+            background: #2ecc71; /* Button hover also green */
+            transform: translateY(-2px);
+        }
+
+        .nav-text {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            color: white;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-overlay">
+        <div class="nav-text">PREMIUM FLEET PORTAL</div>
+
+        <h1 class="brand-name">JASHIKA<br>TRANSPORT</h1>
+        <p class="sub-text">Logistics Excellence</p>
+
+        <div class="login-box">
+            <form action="/login" method="POST">
+                <input type="password" name="password" placeholder="••••••••" required>
+                <button type="submit" class="access-btn">Login to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

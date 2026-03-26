@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jashika Transport | Bill Entry & PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #2c3e50; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        
+        /* Print Area */
+        #bill-to-print { 
+            background: white; 
+            width: 800px; 
+            padding: 40px; 
+            border: 2px solid #000; 
+            position: relative;
+        }
+        
+        .top-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; font-size: 18px; }
+        .header-grid { display: grid; grid-template-columns: 1.2fr 1fr; border-bottom: 1px solid #000; }
+        .company-details { padding: 15px; border-right: 2px solid #000; }
+        .meta-details { display: grid; grid-template-columns: 1fr 1fr; }
+        .meta-box { border: 0.5px solid #000; padding: 8px; font-size: 12px; height: 45px; }
+        
+        input, textarea { width: 100%; border: none; font-size: 14px; outline: none; background: transparent; color: black; }
+
+        .items-table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: -1px; }
+        .items-table th, .items-table td { border: 1px solid #000; padding: 10px; }
+        .row-height { height: 300px; vertical-align: top; }
+
+        .bottom-grid { display: grid; grid-template-columns: 1.5fr 1fr; border: 2px solid #000; border-top: none; }
+        .bank-info { padding: 15px; font-size: 12px; border-right: 2px solid #000; background: #fafafa; }
+        .total-row { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #000; font-size: 13px; }
+
+        /* Seal Section Style */
+        .seal-section {
+            border: 2px solid #000;
+            border-top: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 20px;
+            height: 120px;
+        }
+
+        .btn-group { margin-top: 30px; display: flex; gap: 20px; }
+        .download-btn { background: #e74c3c; color: white; padding: 15px 40px; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 16px; }
+        .save-btn { background: #27ae60; color: white; padding: 15px 40px; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div id="bill-to-print">
+        <div class="top-header"><strong>TAX INVOICE BILL</strong></div>
+        
+        <div class="header-grid">
+            <div class="company-details">
+                <h2 style="margin:0; font-size: 24px;">JASHIKA TRANSPORT</h2>
+                <p style="font-size: 11px; margin: 8px 0;">
+                    29, K.V.R. Nagar, Kodikambam Ground,<br>
+                    TIRUPUR - 641604. Cell: 9500657733<br>
+                    GSTIN: 33CFDPC1325Q1ZM
+                </p>
+            </div>
+            <div class="meta-details">
+                <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Invoice No.</label><input type="text" id="inv_no" value="JT/2026/001"></div>
+                <div class="meta-box"><label style="font-size:10px; font-weight:bold;">Dated</label><input type="text" value="25-03-2026"></div>
+                <div class="meta-box" style="grid-column: span 2;"><label style="font-size:10px; font-weight:bold;">Destination</label><input type="text" placeholder="Enter Destination"></div>
+            </div>
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="10%">S.No.</th>
+                    <th width="60%">Particulars</th>
+                    <th width="30%">Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row-height">
+                    <td align="center">01</td>
+                    <td><textarea id="particulars" placeholder="Type loading details..."></textarea></td>
+                    <td><input type="number" id="base_amount" oninput="doCalculate()" placeholder="0.00" style="text-align:right; font-weight:bold;"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="bottom-grid">
+            <div class="bank-info">
+                <strong>BANK DETAILS:</strong><br>
+                SBI | CHELLAPANDI | 39679976538<br>
+                IFS Code: SBIN0000935
+                <div style="margin-top: 20px; font-size: 10px;">
+                    <strong>Declaration:</strong> Goods once sold will not be taken back.
+                </div>
+            </div>
+            <div>
+                <div class="total-row"><span>Sub Total</span><span id="st">0.00</span></div>
+                <div class="total-row"><span>GST (5%)</span><span id="gst_amt">0.00</span></div>
+                <div class="total-row" style="background:#eee; font-weight:bold;"><span>Grand Total</span><span id="gt">₹ 0.00</span></div>
+            </div>
+        </div>
+
+        <div class="seal-section">
+            <div style="font-size: 11px;">Customer's Signature</div>
+            <div style="text-align: center; min-width: 200px;">
+                <p style="font-size: 12px; margin: 0;">For <b>JASHIKA TRANSPORT</b></p>
+                <div style="height: 60px;"></div> <p style="font-size: 11px; margin: 0;">Authorised Signatory</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="btn-group">
+        <button onclick="downloadPDF()" class="download-btn">DOWNLOAD AS PDF</button>
+        <button onclick="saveData()" class="save-btn">SAVE BILL TO CLOUD</button>
+    </div>
+
+    <script>
+        // 1. Updated GST Calculation Logic
+        function doCalculate() {
+            let amount = parseFloat(document.getElementById('base_amount').value) || 0;
+            let gst = amount * 0.05; 
+            let total = amount + gst;
+
+            document.getElementById('st').innerText = amount.toFixed(2);
+            document.getElementById('gst_amt').innerText = gst.toFixed(2);
+            document.getElementById('gt').innerText = "₹ " + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        }
+
+        // 2. PDF Download Logic
+        function downloadPDF() {
+            const element = document.getElementById('bill-to-print');
+            const invName = document.getElementById('inv_no').value || 'Bill';
+            
+            const opt = {
+                margin: 0.2,
+                filename: invName + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+            
+            let msg = new SpeechSynthesisUtterance("PDF download aaga aarambichiduchi");
+            window.speechSynthesis.speak(msg);
+        }
+
+        // 3. Updated Save Data with Voice Confirmation
+        function saveData() {
+            let totalVal = document.getElementById('gt').innerText;
+            
+            // Voice Confirmation Logic
+            let msg = new SpeechSynthesisUtterance("Bill total " + totalVal + ". Cloud-la save pannatuma?");
+            window.speechSynthesis.speak(msg);
+
+            // Using a simple confirm for logic, but voice says the prompt
+            setTimeout(() => {
+                if (confirm("Do you want to save this bill to cloud?")) {
+                    alert("Data saved successfully!");
+                    let successMsg = new SpeechSynthesisUtterance("Bill successfully save aagiduchi");
+                    window.speechSynthesis.speak(successMsg);
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>

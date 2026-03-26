@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jashika Transport | Management Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; background: #0f172a; }
+
+        /* --- Full Screen Background --- */
+        .hero-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -2;
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            z-index: -1;
+        }
+
+        /* --- Top Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 80px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* LOGO UPDATED TO ORANGE */
+        .logo { color: #ff8c00; font-size: 24px; font-weight: 800; text-transform: uppercase; }
+        .logo span { color: #ffa500; }
+
+        .nav-menu { display: flex; gap: 30px; list-style: none; }
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            padding-bottom: 5px;
+        }
+        /* NAV HOVER UPDATED TO ORANGE */
+        .nav-item:hover, .nav-item.active { color: #ff8c00; border-bottom: 2px solid #ff8c00; }
+
+        /* --- Content Container --- */
+        .container { padding: 40px 80px; color: white; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* --- Welcome Text UPDATED TO ORANGE GRADIENT --- */
+        .welcome-text {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* --- Form Styling --- */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #ff8c00; }
+        .input-group input { 
+            width: 100%; padding: 10px; background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;
+            outline: none;
+        }
+
+        .btn-primary { 
+            padding: 12px 25px; background: #ff8c00; border:none; color:white; 
+            border-radius:8px; cursor:pointer; font-weight: 600; text-decoration: none; 
+            display: inline-block; transition: 0.3s; text-align: center;
+        }
+        .btn-primary:hover { background: #e67e22; transform: translateY(-2px); }
+        .btn-success { background: #2ecc71; }
+        .btn-success:hover { background: #27ae60; }
+        
+        .btn-reset { background: #ff4b2b; margin-left: 20px; font-size: 13px; }
+        .btn-reset:hover { background: #e63917; }
+
+        /* --- Table Styling --- */
+        .entry-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: white; }
+        .entry-table th, .entry-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        .entry-table th { color: #ff8c00; font-size: 14px; text-transform: uppercase; }
+
+        /* --- Stats Cards --- */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #ff8c00;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+        .stat-card i { font-size: 28px; color: #ff8c00; margin-bottom: 15px; display: block; opacity: 0.9; }
+        .stat-card h4 { font-size: 12px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { font-size: 24px; font-weight: 700; color: #fff; }
+
+        .indicator-box { display: flex; gap: 15px; margin-top: 20px; }
+        .indicator {
+            flex: 1; padding: 15px; border-radius: 15px; background: rgba(255,255,255,0.03);
+            border-left: 4px solid #ff8c00; font-size: 13px; color: #ccc;
+        }
+
+        .alert {
+            padding: 15px; background: #2ecc71; color: white; border-radius: 8px;
+            margin-bottom: 20px; text-align: center; animation: fadeIn 0.5s;
+        }
+
+        .hidden { display: none; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg"></div>
+    <div class="overlay"></div>
+
+    <nav class="navbar">
+        <div class="logo">Jashika<span>Transport</span></div>
+        <ul class="nav-menu">
+            <li><a class="nav-item active" onclick="switchTab('home', this)">Home</a></li>
+            <li><a class="nav-item" onclick="switchTab('bill-management', this)">Bill Management</a></li>
+            <li><a class="nav-item" onclick="switchTab('load', this)">Load Entry</a></li>
+            <li><a class="nav-item" style="color: #ff4b2b;" href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div id="home-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h1 class="welcome-text">Welcome Back, Pandi</h1>
+                <button onclick="handleResetStats()" class="btn-primary btn-reset">
+                    <i class="fas fa-sync-alt"></i> Reset Stats
+                </button>
+            </div>
+
+            <p style="color: #94a3b8; margin-bottom: 40px; font-size: 16px;">
+                <i class="fas fa-truck-moving" style="color: #ff8c00; margin-right: 10px;"></i>
+                Manage your fleet and finances in one place. Your system is operational.
+            </p>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Total Profit</h4>
+                    <p id="stat-profit">₹ 0</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-wallet"></i>
+                    <h4>Monthly Revenue</h4>
+                    <p id="stat-revenue">₹ 0</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-box"></i>
+                    <h4>Active Loads</h4>
+                    <p id="stat-loads">0</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-gas-pump"></i>
+                    <h4>Fuel Expenses</h4>
+                    <p id="stat-fuel">₹ 0</p>
+                </div>
+            </div>
+
+            <div class="indicator-box">
+                <div class="indicator" style="border-left-color: #2ecc71;">
+                    <strong style="display:block; color:#2ecc71; margin-bottom:5px;">FLEET STATUS</strong>
+                    All trucks reached destination safely. 100% efficiency.
+                </div>
+                <div class="indicator" style="border-left-color: #ff8c00;">
+                    <strong style="display:block; color:#ff8c00; margin-bottom:5px;">SYSTEM UPDATE</strong>
+                    Voice confirmation and Live logs integrated in Load Entry.
+                </div>
+            </div>
+        </div>
+
+        <div id="bill-management-section" class="hidden">
+            <h2 style="margin-bottom: 10px;"><i class="fas fa-file-invoice"></i> Bill Management</h2>
+            <p style="color: #ccc; margin-bottom: 25px;">Create professional digital bills or view your history.</p>
+            
+            <div class="glass-panel" style="max-width: 600px; display: flex; flex-direction: column; gap: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <a href="/create_bill" class="btn-primary btn-success">
+                        <i class="fas fa-plus-circle"></i> Create New Bill
+                    </a>
+                    <a href="/view_bills" class="btn-primary">
+                        <i class="fas fa-list-ul"></i> View All Bills
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="load-section" class="hidden">
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start;">
+                <div>
+                    <h2>New Load Data Entry</h2>
+                    <div class="glass-panel">
+                        <div class="input-group">
+                            <label>Destination State:</label>
+                            <input type="text" id="load_state" placeholder="e.g. Tamil Nadu" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Total Amount (₹):</label>
+                            <input type="number" id="load_amount" placeholder="Enter amount" required>
+                        </div>
+                        <button onclick="handleLoadSave()" class="btn-primary btn-success" style="width: 100%;">Save Load Data</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2>Recent Load Entries</h2>
+                    <div class="glass-panel">
+                        <table class="entry-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th> <th>Destination State</th>
+                                    <th>Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loadTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            loadSavedData();
+            updateDashboardStats(); 
+        };
+
+        function switchTab(tabName, element) {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('load-section').classList.add('hidden');
+            document.getElementById('bill-management-section').classList.add('hidden');
+            
+            const targetSection = document.getElementById(tabName + '-section');
+            if(targetSection) targetSection.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            if(tabName === 'load') { loadSavedData(); }
+            if(tabName === 'home') { updateDashboardStats(); }
+        }
+
+        function updateDashboardStats() {
+            fetch('/get_loads')
+            .then(res => res.json())
+            .then(data => {
+                let totalAmount = 0;
+                let activeLoads = data.length;
+                
+                data.forEach(entry => {
+                    totalAmount += parseFloat(entry.amount || 0);
+                });
+
+                let profit = totalAmount * 0.4;
+                let fuel = totalAmount * 0.15;
+
+                document.getElementById('stat-profit').innerText = "₹ " + profit.toLocaleString('en-IN');
+                document.getElementById('stat-revenue').innerText = "₹ " + totalAmount.toLocaleString('en-IN');
+                document.getElementById('stat-loads').innerText = activeLoads;
+                document.getElementById('stat-fuel').innerText = "₹ " + fuel.toLocaleString('en-IN');
+            });
+        }
+
+        function loadSavedData() {
+            fetch('/get_loads')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('loadTableBody');
+                tableBody.innerHTML = ""; 
+                data.forEach(entry => {
+                    const row = `<tr>
+                        <td>${entry.date || 'N/A'}</td>
+                        <td>${entry.destination}</td>
+                        <td>₹ ${parseFloat(entry.amount).toLocaleString('en-IN')}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            });
+        }
+
+        function handleLoadSave() {
+            const state = document.getElementById('load_state').value;
+            const amount = document.getElementById('load_amount').value;
+            if(!state || !amount) { alert("Fill all details!"); return; }
+
+            fetch('/save_load_permenant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ state: state, amount: amount })
+            })
+            .then(response => response.json())
+            .then(res => {
+                loadSavedData();
+                updateDashboardStats();
+                let msg = new SpeechSynthesisUtterance(state + " data saved to cloud.");
+                window.speechSynthesis.speak(msg);
+                document.getElementById('load_state').value = "";
+                document.getElementById('load_amount').value = "";
+            });
+        }
+
+        function handleResetStats() {
+            if(confirm("Confirm: Dashboard data and history reset pannatuma Pandi? New entries mattum thaan save aagum.")) {
+                fetch('/reset_stats', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-profit').innerText = "₹ 0";
+                    document.getElementById('stat-revenue').innerText = "₹ 0";
+                    document.getElementById('stat-loads').innerText = "0";
+                    document.getElementById('stat-fuel').innerText = "₹ 0";
+                    document.getElementById('loadTableBody').innerHTML = "";
+
+                    let msg = new SpeechSynthesisUtterance("Database reset successfully");
+                    window.speechSynthesis.speak(msg);
+                    alert(data.message);
+                });
+            }
+        }
+
+        setTimeout(() => {
+            const alert = document.querySelector('.alert');
+            if (alert) alert.style.display = 'none';
+        }, 3000);
+    </script>
+</body>
+</html>
