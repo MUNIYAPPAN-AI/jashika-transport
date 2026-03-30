@@ -3,134 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jashika Transport | View Bills</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>View Bills - Jashika Transport</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; min-height: 100vh; padding: 20px; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top right, #1e3a8a, #0f172a); z-index: -1; }
-        .container { max-width: 950px; margin: auto; }
+        /* Table and Page Styles */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
 
-        /* Manual Bill Layout Style */
-        .invoice-card {
-            background: white;
+        /* Quotation Styles */
+        #quotation-container { 
+            display: none; 
+            margin-top: 30px; 
+            border: 2px solid #333; 
+            padding: 40px; 
+            background: white; 
             color: black;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 2px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            page-break-after: always;
         }
-
-        .tax-header { text-align: center; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; }
-
-        .header-section { display: grid; grid-template-columns: 1.5fr 1fr; border: 1px solid black; }
-        .comp-info { padding: 10px; border-right: 1px solid black; }
-        .comp-info h1 { font-size: 24px; font-weight: 800; }
-        .comp-info p { font-size: 11px; line-height: 1.4; }
-
-        .meta-info { display: grid; grid-template-columns: 1fr 1fr; }
-        .meta-box { padding: 5px; border: 0.5px solid #ccc; font-size: 11px; height: 35px; }
-        .meta-box label { display: block; font-weight: 700; font-size: 9px; color: #555; }
-
-        .party-box { border: 1px solid black; border-top: none; padding: 10px; font-size: 13px; min-height: 60px; }
-
-        /* Table Style */
-        .bill-table { width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: -1px; }
-        .bill-table th { border: 1px solid black; padding: 8px; font-size: 12px; background: #f0f0f0; }
-        .bill-table td { border: 1px solid black; padding: 10px; height: 150px; vertical-align: top; font-size: 13px; }
-
-        .bottom-section { display: grid; grid-template-columns: 1.5fr 1fr; margin-top: -1px; }
-        .bank-info { border: 1px solid black; padding: 10px; font-size: 11px; }
-        .tax-info { border: 1px solid black; border-left: none; }
-        .tax-row { display: flex; justify-content: space-between; padding: 5px 10px; border-bottom: 1px solid #eee; font-size: 12px; }
-        .total-row { background: #eee; font-weight: 700; font-size: 15px; border-bottom: none; }
-
-        .footer-box { border: 1px solid black; border-top: none; padding: 10px; display: grid; grid-template-columns: 1.2fr 1fr; }
-        .dec-text { font-size: 9px; border-right: 1px solid #ccc; padding-right: 10px; }
-        .sig-text { text-align: right; font-size: 11px; }
-
-        .actions { text-align: center; margin-top: 20px; }
-        .btn { padding: 12px 25px; border-radius: 5px; cursor: pointer; border: none; font-weight: 600; text-decoration: none; display: inline-block; }
-        .btn-print { background: #3b82f6; color: white; }
-        .btn-dash { background: rgba(255,255,255,0.1); color: white; margin-left: 10px; border: 1px solid white; }
+        .q-header { display: flex; justify-content: space-between; color: #d9534f; font-weight: bold; }
+        .q-title { text-align: center; color: #28a745; margin: 10px 0; }
+        .q-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .q-table th, .q-table td { border: 1px solid black; padding: 8px; text-align: center; }
+        
+        .btn-group { margin-bottom: 20px; display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; text-decoration: none; display: inline-block; }
+        .btn-blue { background-color: #007bff; }
+        .btn-green { background-color: #28a745; }
+        .btn-print { background-color: #6c757d; margin-top: 20px; }
 
         @media print {
-            .bg-overlay, .actions { display: none; }
-            body { background: transparent; padding: 0; }
-            .invoice-card { box-shadow: none; border: 1px solid black; margin: 0; }
+            body * { visibility: hidden; }
+            #quotation-container, #quotation-container * { visibility: visible; }
+            #quotation-container { position: absolute; left: 0; top: 0; width: 100%; border: none; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
-<body onload="speakReady()">
-    <div class="bg-overlay"></div>
-    <div class="container">
-        
-        {% for load in loads %}
-        <div class="invoice-card">
-            <div class="tax-header">Tax Invoice Bill</div>
-            <div class="header-section">
-                <div class="comp-info">
-                    <h1>JASHIKA TRANSPORT</h1>
-                    <p>29, K.V.R. Nagar, Kodikambam Ground, TIRUPUR-641604</p>
-                    <p>GSTIN: 33CFDPC1325Q1ZM | Cell: 7092701779</p>
-                </div>
-                <div class="meta-info">
-                    <div class="meta-box"><label>Invoice No.</label>JT/2026/0{{ loop.index }}</div>
-                    <div class="meta-box"><label>Dated</label>25-03-2026</div>
-                    <div class="meta-box"><label>Dispatch Doc.</label>-</div>
-                    <div class="meta-box"><label>Destination</label>{{ load.destination }}</div>
-                </div>
-            </div>
-            <div class="party-box">To M/s. <strong>Cash / Party</strong></div>
-            <table class="bill-table">
-                <thead>
-                    <tr><th style="width: 10%;">S.No</th><th>Particulars</th><th style="width: 15%;">Qty.</th><th style="width: 20%;">Amount (₹)</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="text-align: center;">01</td>
-                        <td><strong>Transport Service</strong><br>Lorry Service to {{ load.destination }}</td>
-                        <td style="text-align: center;">1 Load</td>
-                        <td style="text-align: right;">{{ "{:,.2f}".format(load.amount|float) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="bottom-section">
-                <div class="bank-info">
-                    <strong>BANK DETAILS:</strong><br>
-                    State Bank of India | A/c: 39679976538<br>
-                    Holder: CHELLAPANDI | IFSC: SBIN0000935
-                </div>
-                <div class="tax-info">
-                    <div class="tax-row"><span>Sub Total</span><span>{{ "{:,.2f}".format(load.amount|float) }}</span></div>
-                    <div class="tax-row total-row"><span>Grand Total</span><span>₹ {{ "{:,.2f}".format(load.amount|float) }}</span></div>
-                </div>
-            </div>
-            <div class="footer-box">
-                <div class="dec-text">Declaration: We declare that this invoice shows the actual price of services described.</div>
-                <div class="sig-text">For Jashika Transport<br><br><br>Authorised Signatory</div>
-            </div>
-        </div>
-        {% else %}
-        <div class="invoice-card">
-            <p style="color: red; text-align: center; font-weight: bold;">No Bill Records Found in Database!</p>
-            <div class="tax-header" style="opacity: 0.5;">Sample Layout (No Data)</div>
-            </div>
-        {% endfor %}
+<body>
 
-        <div class="actions">
-            <button class="btn btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Bills</button>
-            <a href="/bill_entry" class="btn btn-dash">Back to Dashboard</a>
-        </div>
+<div class="container">
+    <h2>Jashika Transport - All Loads & Bills</h2>
+
+    <div class="btn-group no-print">
+        <a href="{{ url_for('bill_entry') }}" class="btn btn-blue">Add New Load</a>
+        <button onclick="showQuotation()" class="btn btn-green">View Quotation</button>
+        <a href="{{ url_for('logout') }}" class="btn" style="background-color: #dc3545;">Logout</a>
     </div>
 
-    <script>
-        function speakReady() {
-            const msg = new SpeechSynthesisUtterance("Layout fixed, Pandi. If the screen is still blank, please add a new load entry first.");
-            window.speechSynthesis.speak(msg);
+    <div class="no-print">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Destination</th>
+                    <th>Party Name</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for load in loads %}
+                <tr>
+                    <td>{{ load.date }}</td>
+                    <td>{{ load.destination }}</td>
+                    <td>{{ load.party_name if load.party_name else '-' }}</td>
+                    <td>₹{{ load.amount }}</td>
+                    <td>{{ load.type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="quotation-container">
+        <div class="q-header">
+            <span>CHELLAPANDI: 7092701779</span>
+            <span>VIRUMANDI: 8807302622</span>
+        </div>
+
+        <div class="q-title">
+            <h1 style="margin: 0;">JASHIKA TRANSPORT</h1>
+            <p style="margin: 5px 0;">( ALL OVER INDIA SERVICES )</p>
+            <p style="font-size: 14px; font-weight: normal; color: black;">29, KVR NAGAR, KODIKAMBAM GROUND, TIRUPPUR - 641604</p>
+            <p style="font-size: 14px; font-weight: normal; color: black;">E-MAIL: <span style="color: blue;">chellapandi953@gmail.com</span></p>
+            <p><strong>GSTIN: 33CFDPC1325Q1ZM</strong></p>
+        </div>
+
+        <div style="border-top: 2px solid #004085; margin-top: 20px; padding-top: 10px;">
+            <h3 style="text-align: center; color: #004085; text-decoration: underline;">VEHICLE QUOTATION</h3>
+            
+            <p>TO: ___________________________</p>
+            <p>SUBJECT: QUOTATION FOR TRANSPORTATION OF CONSIGNMENT... REG</p>
+            <p>SIR,</p>
+            <p>WITH REFERENCE TO YOUR ENQUIRY, WE WISH TO QUOTE THE TRANSPORTATION COST IS NOTED BELOW.</p>
+
+            <table class="q-table">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th>S.NO</th>
+                        <th>STARTING LOCATION</th>
+                        <th>UNLOADING</th>
+                        <th>WEIGHT</th>
+                        <th>TYPE OF CONTAINER</th>
+                        <th>AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="height: 35px;">1</td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td style="height: 35px;">2</td><td></td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td style="height: 35px;">3</td><td></td><td></td><td></td><td></td><td></td></tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px; font-size: 13px; font-weight: bold;">
+                <p>* FREIGHT CHARGES MAY PLEASE BE GIVEN 80% AT THE TIME OF DEPARTURE OF THE VEHICLE</p>
+                <p>* BALANCE 20% MAY BE GIVEN AFTER DELIVERY OF THE CONSIGNMENT OR AT THE TIME OF POD GIVEN.</p>
+            </div>
+
+            <div style="text-align: right; margin-top: 50px; font-weight: bold;">
+                FOR JASHIKA TRANSPORT
+            </div>
+        </div>
+        
+        <button onclick="window.print()" class="btn btn-print no-print">Print as PDF</button>
+    </div>
+</div>
+
+<script>
+    function showQuotation() {
+        var x = document.getElementById("quotation-container");
+        if (x.style.display === "none" || x.style.display === "") {
+            x.style.display = "block";
+            // Voice Confirmation
+            const speech = new SpeechSynthesisUtterance("Quotation page opened");
+            window.speechSynthesis.speak(speech);
+        } else {
+            x.style.display = "none";
         }
-    </script>
+    }
+
+    // Flash message-la 'voice' category irundha auto-ah pesum
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'voice' %}
+            const msg = new SpeechSynthesisUtterance("{{ message }}");
+            window.speechSynthesis.speak(msg);
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</script>
+
 </body>
 </html>

@@ -43,7 +43,7 @@
         .logo { color: #ff8c00; font-size: 24px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: #ffa500; }
 
-        .nav-menu { display: flex; gap: 30px; list-style: none; }
+        .nav-menu { display: flex; gap: 30px; list-style: none; align-items: center; }
         .nav-item {
             color: white;
             text-decoration: none;
@@ -156,6 +156,7 @@
             <li><a class="nav-item active" onclick="switchTab('home', this)">Home</a></li>
             <li><a class="nav-item" onclick="switchTab('bill-management', this)">Bill Management</a></li>
             <li><a class="nav-item" onclick="switchTab('load', this)">Load Entry</a></li>
+            <li><a href="{{ url_for('quotation') }}" class="nav-item" style="color: #ff9800; font-weight: bold;">Quotation</a></li>
             <li><a class="nav-item" style="color: #ff4b2b;" href="/logout">Logout</a></li>
         </ul>
     </nav>

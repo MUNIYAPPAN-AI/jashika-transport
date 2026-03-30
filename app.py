@@ -58,6 +58,13 @@ def create_bill():
         return redirect(url_for('home'))
     return render_template('create_bill.html')
 
+# --- PUDHU QUOTATION ROUTE (Ippo Add Panniyathu) ---
+@app.route('/quotation')
+def quotation():
+    if 'user' not in session:
+        return redirect(url_for('home'))
+    return render_template('quotation.html')
+
 @app.route('/save_bill', methods=['POST'])
 def save_bill():
     if 'user' not in session:
@@ -159,5 +166,4 @@ def add_load():
 # --- Final Step (Pop-up Fix) ---
 if __name__ == '__main__':
     # Local-la run panna host '127.0.0.1' use panrom. 
-    # Ithunala VS Code external website pop-up kaattathu.
     app.run(host='127.0.0.1', port=5000, debug=True)
