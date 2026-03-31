@@ -42,11 +42,26 @@
         }
 
         .no-print { margin-bottom: 20px; text-align: right; }
+        
+        /* PDF Single Page Fix */
         @media print { 
+            @page {
+                size: A4;
+                margin: 5mm; /* Side gaps kuraikurathuku */
+            }
             .no-print { display: none; } 
-            body { background: none; padding: 0; } 
-            .quote-card { box-shadow: none; width: 100%; border: none; }
+            body { background: none; padding: 0; margin: 0; } 
+            .quote-card { 
+                box-shadow: none; 
+                width: 100%; 
+                border: none; 
+                padding: 20px;
+                transform: scale(0.96); /* Content-ah light-ah surukki ore page-la kondhu varum */
+                transform-origin: top center;
+            }
             input::placeholder { color: transparent; }
+            table { margin-top: 10px; }
+            th, td { padding: 4px; } /* Row gap kuraika */
         }
         
         .footer-text { margin-top: 20px; font-size: 12px; font-weight: bold; }
