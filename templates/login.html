@@ -14,11 +14,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* 👇 Deep Dark Background so text is visible even if image fails 👇 */
             background-color: #000;
-            /* 👇 Updated HD Lorry Link 👇 */
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                               url('https://images.unsplash.com/photo-1591768793355-74d04bb6608f?q=80&w=1920&auto=format&fit=crop');
+            
+            /* Blur overlay-ah remove pannitu clear-ah image-ah set pannirukaen */
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                              url("{{ url_for('static', filename='image.jpg') }}");
+            
             background-size: cover;
             background-position: center;
             font-family: 'Poppins', sans-serif;
@@ -26,114 +27,162 @@
         }
 
         .glass-overlay {
-            width: 85%;
-            height: 80vh;
-            /* Dark Glass Effect */
-            background: rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            /* Inga backdrop-filter: blur-ah 'none' pannitaen, so blur aagaathu */
+            background: rgba(0, 0, 0, 0.2); 
+            backdrop-filter: none; 
+            -webkit-backdrop-filter: none;
+            
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
         }
 
-        /* BRAND NAME UPDATED TO GREEN */
+        /* JT LUXURY LOGO */
+        .logo-box {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        .logo-text { 
+            font-size: 45px; 
+            font-weight: 900; 
+            color: #1a1a2e; 
+            font-style: italic; 
+            font-family: 'Playfair Display', serif;
+        }
+
         .brand-name {
             font-family: 'Playfair Display', serif;
-            color: #2ecc71; /* Neon Green Color */
-            font-size: clamp(3rem, 10vw, 6rem);
+            color: #2ecc71; 
+            font-size: clamp(2.5rem, 8vw, 5rem);
             text-transform: uppercase;
             letter-spacing: 2px;
             line-height: 0.95;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-style: italic;
-            text-shadow: 0px 5px 20px rgba(46, 204, 113, 0.3); /* Soft Green Glow */
+            text-shadow: 0px 5px 20px rgba(46, 204, 113, 0.4);
         }
 
-        /* SUB TEXT UPDATED TO LIGHT GREEN */
         .sub-text {
-            color: #a3e4a3; /* Light Green shade */
-            font-size: 0.9rem;
-            letter-spacing: 12px;
+            color: #a3e4a3;
+            font-size: 0.8rem;
+            letter-spacing: 10px;
             text-transform: uppercase;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             font-weight: 300;
-            opacity: 0.9;
+            opacity: 0.8;
         }
 
         .login-box {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
             width: 100%;
-            max-width: 340px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            max-width: 360px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
         }
 
         input {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #eee;
             outline: none;
             font-size: 1.1rem;
             text-align: center;
-            margin-bottom: 15px;
-            letter-spacing: 5px;
+            margin-bottom: 20px;
+            letter-spacing: 8px;
             color: #000;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
         }
 
         .access-btn {
             width: 100%;
             background: #111;
             color: white;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 15px;
             border: none;
             text-transform: uppercase;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.4s;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
         }
 
         .access-btn:hover {
-            background: #2ecc71; /* Button hover also green */
-            transform: translateY(-2px);
+            background: #2ecc71; 
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
         }
 
         .nav-text {
             position: absolute;
-            top: 40px;
-            right: 60px;
+            top: 30px;
             color: white;
             font-size: 0.7rem;
-            letter-spacing: 3px;
-            opacity: 0.7;
+            letter-spacing: 4px;
+            opacity: 0.6;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
     <div class="glass-overlay">
-        <div class="nav-text">PREMIUM FLEET PORTAL</div>
+        <div class="nav-text">SECURE FLEET MANAGEMENT</div>
+
+        <div class="logo-box">
+            <span class="logo-text">JT</span>
+        </div>
 
         <h1 class="brand-name">JASHIKA<br>TRANSPORT</h1>
         <p class="sub-text">Logistics Excellence</p>
 
         <div class="login-box">
+            <p class="login-title">Enter Access Key</p>
             <form action="/login" method="POST">
                 <input type="password" name="password" placeholder="••••••••" required>
                 <button type="submit" class="access-btn">Login to Dashboard</button>
             </form>
         </div>
     </div>
+
+    <script>
+        window.onload = function() {
+            if (document.referrer.includes('/dashboard')) {
+                const msg = new SpeechSynthesisUtterance("Logout successful. Safe-ah irunga Muniyappan.");
+                window.speechSynthesis.speak(msg);
+            }
+        };
+    </script>
 
 </body>
 </html>

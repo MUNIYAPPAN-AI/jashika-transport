@@ -3,104 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <title>Jashika Transport - Quotation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             font-family: sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
+            margin: 0;
         }
+
         .quote-card {
             background: rgba(255, 255, 255, 0.98);
             width: 850px;
-            padding: 40px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        .header { display: flex; justify-content: space-between; color: #d32f2f; font-weight: bold; font-size: 14px; }
-        .company-info { text-align: center; }
-        .company-info h1 { color: #2e7d32; margin: 5px 0; font-size: 32px; }
-        .company-info p { margin: 2px 0; font-size: 14px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th, td { border: 1px solid black; padding: 5px; text-align: center; font-size: 13px; font-weight: bold; }
-        th { background: #f2f2f2; text-transform: uppercase; padding: 12px; }
-        
-        /* Input Styling for typing */
-        .editable-cell {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            text-align: center;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: bold;
-            padding: 8px 0;
+            color: black !important;
+            display: flex;
+            flex-direction: column;
+            min-height: 1050px; /* A4 Fit */
         }
 
-        .no-print { margin-bottom: 20px; text-align: right; }
-        
-        /* PDF Single Page Fix */
-        @media print { 
-            @page {
-                size: A4;
-                margin: 5mm; /* Side gaps kuraikurathuku */
-            }
-            .no-print { display: none; } 
-            body { background: none; padding: 0; margin: 0; } 
-            .quote-card { 
-                box-shadow: none; 
-                width: 100%; 
-                border: none; 
-                padding: 20px;
-                transform: scale(0.96); /* Content-ah light-ah surukki ore page-la kondhu varum */
-                transform-origin: top center;
-            }
-            input::placeholder { color: transparent; }
-            table { margin-top: 10px; }
-            th, td { padding: 4px; } /* Row gap kuraika */
+        /* LUXURY LOGO HEADER SECTION */
+        .company-header-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
         }
+
+        .logo-box {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .logo-text { font-size: 40px; font-weight: 900; color: #1a1a2e; font-style: italic; }
+
+        .company-info-text h1 { color: #2e7d32; margin: 0; font-size: 34px; letter-spacing: 1px; }
+        .company-info-text p { margin: 2px 0; font-size: 13px; font-weight: bold; }
+
+        .header-top { display: flex; justify-content: space-between; color: #d32f2f; font-weight: bold; font-size: 13px; width: 100%; margin-bottom: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; flex-grow: 1; }
+        th, td { border: 1px solid black; padding: 8px; text-align: center; font-size: 13px; font-weight: bold; }
+        th { background: #f2f2f2; text-transform: uppercase; }
+
+        .editable-cell {
+            width: 100%; border: none; outline: none; background: transparent;
+            text-align: center; font-family: inherit; font-size: 13px; font-weight: bold;
+        }
+
+        .no-print { margin-bottom: 20px; display: flex; gap: 15px; }
+        .btn-download { background: #ff8c00; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .footer-text { margin-top: 15px; font-size: 12px; font-weight: bold; line-height: 1.6; }
         
-        .footer-text { margin-top: 20px; font-size: 12px; font-weight: bold; }
-        .signature { text-align: right; margin-top: 30px; font-weight: bold; text-transform: uppercase; }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        #sig-canvas { border: 1px dashed #aaa; background: #fff; cursor: crosshair; }
+        .clear-sig { color: red; font-size: 11px; cursor: pointer; text-decoration: underline; display: block; text-align: center; }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .no-print { display: none !important; }
+            .quote-card { box-shadow: none; width: 100%; padding: 15px; transform: scale(1); }
+            #sig-canvas { border: none !important; }
+        }
     </style>
 </head>
 <body>
-    <div class="quote-card">
-        <div class="no-print">
-            <button onclick="window.print()" style="background: #ff8c00; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Download PDF / Print</button>
-            <a href="/" style="margin-left: 15px; text-decoration: none; color: #333; font-weight: bold;">← Back to Dashboard</a>
-        </div>
 
-        <div class="header">
+    <div class="no-print">
+        <button onclick="downloadQuotationPDF()" class="btn-download">Download Quotation PDF</button>
+        <a href="/" style="text-decoration: none; background: white; padding: 12px 20px; border-radius: 5px; color: black; font-weight: bold;">← Dashboard</a>
+    </div>
+
+    <div class="quote-card" id="quote-content">
+        <div class="header-top">
             <span>CHELLAPANDI: 7092701779</span>
             <span>VIRUMANDI: 8807302622</span>
         </div>
 
-        <div class="company-info">
-            <h1>JASHIKA TRANSPORT</h1>
-            <p>( ALL OVER INDIA SERVICES )</p>
-            <p>29, KVR NAGAR, KODIKAMBAM GROUND, TIRUPPUR - 641604</p>
-            <p>E-MAIL: chellapandi953@gmail.com</p>
-            <p style="border-top: 2px solid #004085; display: inline-block; padding-top: 5px; margin-top: 10px;"><strong>GSTIN: 33CFDPC1325Q1ZM</strong></p>
+        <div class="company-header-box">
+            <div class="logo-box"><span class="logo-text">JT</span></div>
+            <div class="company-info-text">
+                <h1>JASHIKA TRANSPORT</h1>
+                <p>( ALL OVER INDIA SERVICES )</p>
+                <p>29, KVR NAGAR, KODIKAMBAM GROUND, TIRUPPUR - 641604</p>
+                <p>GSTIN: 33CFDPC1325Q1ZM | E-MAIL: chellapandi953@gmail.com</p>
+            </div>
         </div>
 
-        <h3 style="text-align: center; text-decoration: underline; color: #004085; margin-top: 20px;">VEHICLE QUOTATION</h3>
+        <h3 style="text-align: center; text-decoration: underline; color: #004085; margin: 5px 0;">VEHICLE QUOTATION</h3>
         
-        <p style="font-weight: bold; display: flex; align-items: center;">
-            TO: <input type="text" class="editable-cell" style="text-align: left; margin-left: 10px; border-bottom: 1px solid #ccc; width: 300px;" placeholder="Customer Name / Company">
+        <p style="font-weight: bold; margin: 10px 0;">
+            TO: <input type="text" class="editable-cell" style="text-align: left; border-bottom: 1px solid #ccc; width: 400px;" placeholder="Customer Name / Company Name">
         </p>
-        <p style="font-weight: bold;">SUBJECT: QUOTATION FOR TRANSPORTATION OF CONSIGNMENT... REG</p>
-        <p style="font-size: 14px;">SIR,</p>
-        <p style="font-size: 14px;">WITH REFERENCE TO YOUR ENQUIRY, WE WISH TO QUOTE THE TRANSPORTATION COST IS NOTED BELOW.</p>
+        <p style="font-weight: bold; font-size: 13px;">SUBJECT: QUOTATION FOR TRANSPORTATION OF CONSIGNMENT... REG</p>
+        <p style="font-size: 13px; margin: 5px 0;">SIR, WITH REFERENCE TO YOUR ENQUIRY, WE WISH TO QUOTE THE TRANSPORTATION COST IS NOTED BELOW.</p>
         
         <table>
             <thead>
                 <tr>
-                    <th style="width: 50px;">S.NO</th>
+                    <th style="width: 40px;">S.NO</th>
                     <th>STARTING LOCATION</th>
                     <th>UNLOADING</th>
                     <th>WEIGHT</th>
@@ -115,32 +135,92 @@
                 <tr><td>3</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
                 <tr><td>4</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
                 <tr><td>5</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-                <tr><td>6</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-                <tr><td>7</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-                <tr><td>8</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-                <tr><td>9</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-                <tr><td>10</td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td><td><input type="text" class="editable-cell"></td></tr>
-            </tbody>put type="text" class="editable-cell"></td></tr>
-            </tbody>
             </tbody>
         </table>
 
         <div class="footer-text">
-            <p>*NOTE: EXTRA 5% TAX</p>
-            <p>* FREIGHT CHARGES MAY PLEASE BE GIVEN 80% AT THE TIME OF DEPARTURE OF THE VEHICLE</p>
+            <p style="color: red; margin-bottom: 5px;">* NOTE: EXTRA 5% TAX APPLICABLE</p>
+            <p>* FREIGHT CHARGES MAY PLEASE BE GIVEN 80% AT THE TIME OF DEPARTURE OF THE VEHICLE.</p>
             <p>* BALANCE 20% MAY BE GIVEN AFTER DELIVERY OF THE CONSIGNMENT OR AT THE TIME OF POD GIVEN.</p>
         </div>
 
-        <div class="signature">
-            FOR JASHIKA TRANSPORT
+        <div class="signature-section">
+            <div style="font-size: 13px; font-weight: bold; border-top: 1px solid #000; padding-top: 5px; width: 200px; text-align: center;">
+                Customer Signature
+            </div>
+            <div style="text-align: center;">
+                <p style="margin: 0; font-weight: bold; font-size: 13px;">For JASHIKA TRANSPORT</p>
+                <div style="margin: 5px 0;">
+                    <canvas id="sig-canvas" width="200" height="70"></canvas>
+                    <span id="clear-sig" class="no-print">Clear Signature</span>
+                </div>
+                <p style="margin: 0; font-weight: bold; font-size: 12px; border-top: 1px solid #000; padding-top: 5px;">AUTHORISED SIGNATORY</p>
+            </div>
         </div>
     </div>
 
     <script>
         window.onload = function() {
-            const msg = new SpeechSynthesisUtterance("Quotation is ready for typing.");
-            window.speechSynthesis.speak(msg);
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Quotation with Luxury Logo and Signature ready."));
         };
+
+        // Signature Canvas Logic
+        const canvas = document.getElementById('sig-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (e.clientX || e.touches[0].clientX) - rect.left,
+                y: (e.clientY || e.touches[0].clientY) - rect.top
+            };
+        }
+
+        function start(e) {
+            drawing = true;
+            ctx.beginPath();
+            const pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            e.preventDefault();
+            const pos = getPos(e);
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "black";
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stop() { drawing = false; }
+
+        canvas.addEventListener('mousedown', start);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stop);
+        canvas.addEventListener('touchstart', start);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stop);
+
+        document.getElementById('clear-sig').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // PDF Download Function
+        function downloadQuotationPDF() {
+            const element = document.getElementById('quote-content');
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: 'Jashika_Quotation.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Quotation PDF downloading."));
+        }
     </script>
 </body>
 </html>

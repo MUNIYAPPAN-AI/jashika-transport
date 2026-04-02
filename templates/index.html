@@ -4,24 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jashika Transport | Management Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; background: #0f172a; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; background: #0f172a; min-height: 100vh; }
 
-        /* --- Full Screen Background --- */
+        /* --- Moving Clouds Background --- */
         .hero-bg {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
-            background-size: cover;
+            top: 0; left: 0; 
+            width: 200%; /* Infinite loop animation */
+            height: 100%;
+            
+            /* UPDATED: Static folder-la irunthu image load aagum */
+            background: url("{{ url_for('static', filename='image.jpg') }}") repeat-x;
+            
+            background-size: cover; /* Background full-ah cover aaga 'cover' use panroma */
             z-index: -2;
+            animation: moveClouds 80s linear infinite;
         }
+
+        @keyframes moveClouds {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.75));
             z-index: -1;
         }
 
@@ -30,119 +42,139 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 80px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            padding: 15px 60px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        /* LOGO UPDATED TO ORANGE */
-        .logo { color: #ff8c00; font-size: 24px; font-weight: 800; text-transform: uppercase; }
-        .logo span { color: #ffa500; }
+        .logo { 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffd700; 
+            font-size: 22px; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px;
+        }
+        
+        .jt-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a2e;
+            font-weight: 900;
+            font-size: 22px;
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+            font-style: italic;
+        }
+        
+        .logo span { color: #ffffff; font-weight: 400; margin-left: 5px; }
 
         .nav-menu { display: flex; gap: 30px; list-style: none; align-items: center; }
         .nav-item {
-            color: white;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
             transition: 0.3s;
-            padding-bottom: 5px;
+            padding: 8px 0;
         }
-        /* NAV HOVER UPDATED TO ORANGE */
-        .nav-item:hover, .nav-item.active { color: #ff8c00; border-bottom: 2px solid #ff8c00; }
+        .nav-item:hover, .nav-item.active { color: #ffd700; border-bottom: 2px solid #ffd700; }
 
         /* --- Content Container --- */
-        .container { padding: 40px 80px; color: white; }
+        .container { padding: 40px 60px; color: white; position: relative; z-index: 1; }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
+            border-radius: 25px;
             padding: 30px;
             margin-top: 20px;
-            animation: fadeInUp 0.5s ease;
+            animation: fadeInUp 0.6s ease;
         }
 
-        /* --- Welcome Text UPDATED TO ORANGE GRADIENT --- */
         .welcome-text {
-            font-size: 48px;
+            font-size: clamp(32px, 5vw, 52px);
             font-weight: 800;
-            background: linear-gradient(to right, #fff, #ff8c00);
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(to right, #ffd700, #ff8c00, #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
         /* --- Form Styling --- */
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #ff8c00; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #ffd700; font-weight: 600; }
         .input-group input { 
-            width: 100%; padding: 10px; background: rgba(255,255,255,0.1); 
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;
-            outline: none;
+            width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.08); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
+            outline: none; transition: 0.3s; font-size: 15px;
         }
+        .input-group input:focus { border-color: #ffd700; background: rgba(255,255,255,0.15); }
 
         .btn-primary { 
-            padding: 12px 25px; background: #ff8c00; border:none; color:white; 
-            border-radius:8px; cursor:pointer; font-weight: 600; text-decoration: none; 
-            display: inline-block; transition: 0.3s; text-align: center;
+            padding: 14px 28px; background: linear-gradient(135deg, #ffd700, #ff8c00); border:none; color:#1a1a2e; 
+            border-radius:12px; cursor:pointer; font-weight: 700; text-decoration: none; 
+            display: inline-block; transition: 0.4s; text-align: center; font-size: 14px;
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
         }
-        .btn-primary:hover { background: #e67e22; transform: translateY(-2px); }
-        .btn-success { background: #2ecc71; }
-        .btn-success:hover { background: #27ae60; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
         
-        .btn-reset { background: #ff4b2b; margin-left: 20px; font-size: 13px; }
-        .btn-reset:hover { background: #e63917; }
+        .btn-reset { background: rgba(255, 75, 43, 0.1); color: #ff4b2b; border: 1px solid #ff4b2b; margin-left: 20px; }
+        .btn-reset:hover { background: #ff4b2b; color: white; }
 
         /* --- Table Styling --- */
-        .entry-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: white; }
-        .entry-table th, .entry-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; }
-        .entry-table th { color: #ff8c00; font-size: 14px; text-transform: uppercase; }
+        .entry-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: #e2e8f0; }
+        .entry-table th, .entry-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        .entry-table th { color: #ffd700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* --- Stats Cards --- */
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card {
-            background: rgba(255,255,255,0.05);
-            padding: 25px;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.03);
+            padding: 30px 20px;
+            border-radius: 22px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.4s;
         }
         .stat-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.12);
-            border-color: #ff8c00;
-            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #ffd700;
         }
-        .stat-card i { font-size: 28px; color: #ff8c00; margin-bottom: 15px; display: block; opacity: 0.9; }
-        .stat-card h4 { font-size: 12px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-card p { font-size: 24px; font-weight: 700; color: #fff; }
+        .stat-card i { font-size: 32px; color: #ffd700; margin-bottom: 15px; display: block; }
+        .stat-card h4 { font-size: 11px; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .stat-card p { font-size: 26px; font-weight: 700; color: #fff; }
 
-        .indicator-box { display: flex; gap: 15px; margin-top: 20px; }
+        .indicator-box { display: flex; gap: 20px; margin-top: 30px; }
         .indicator {
-            flex: 1; padding: 15px; border-radius: 15px; background: rgba(255,255,255,0.03);
-            border-left: 4px solid #ff8c00; font-size: 13px; color: #ccc;
+            flex: 1; padding: 20px; border-radius: 18px; background: rgba(255,255,255,0.03);
+            border-left: 4px solid #ffd700; font-size: 14px; color: #cbd5e1;
         }
 
         .alert {
-            padding: 15px; background: #2ecc71; color: white; border-radius: 8px;
-            margin-bottom: 20px; text-align: center; animation: fadeIn 0.5s;
+            padding: 15px; background: #2ecc71; color: white; border-radius: 12px;
+            margin-bottom: 25px; text-align: center; font-weight: 600;
         }
 
         .hidden { display: none; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -151,13 +183,16 @@
     <div class="overlay"></div>
 
     <nav class="navbar">
-        <div class="logo">Jashika<span>Transport</span></div>
+        <div class="logo">
+            <div class="jt-icon">JT</div>
+            Jashika<span>Transport</span>
+        </div>
         <ul class="nav-menu">
             <li><a class="nav-item active" onclick="switchTab('home', this)">Home</a></li>
             <li><a class="nav-item" onclick="switchTab('bill-management', this)">Bill Management</a></li>
             <li><a class="nav-item" onclick="switchTab('load', this)">Load Entry</a></li>
-            <li><a href="{{ url_for('quotation') }}" class="nav-item" style="color: #ff9800; font-weight: bold;">Quotation</a></li>
-            <li><a class="nav-item" style="color: #ff4b2b;" href="/logout">Logout</a></li>
+            <li><a href="{{ url_for('quotation') }}" class="nav-item" style="color: #ffd700; font-weight: bold;">Quotation</a></li>
+            <li><a class="nav-item" style="color: #ff4b2b;" href="/logout"><i class="fas fa-power-off"></i></a></li>
         </ul>
     </nav>
 
@@ -172,7 +207,7 @@
         {% endwith %}
 
         <div id="home-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h1 class="welcome-text">Welcome Back, Pandi</h1>
                 <button onclick="handleResetStats()" class="btn-primary btn-reset">
                     <i class="fas fa-sync-alt"></i> Reset Stats
@@ -180,8 +215,8 @@
             </div>
 
             <p style="color: #94a3b8; margin-bottom: 40px; font-size: 16px;">
-                <i class="fas fa-truck-moving" style="color: #ff8c00; margin-right: 10px;"></i>
-                Manage your fleet and finances in one place. Your system is operational.
+                <i class="fas fa-truck-moving" style="color: #ffd700; margin-right: 10px;"></i>
+                Logistics Excellence & Premium Fleet Management.
             </p>
             
             <div class="stats-row">
@@ -210,25 +245,25 @@
             <div class="indicator-box">
                 <div class="indicator" style="border-left-color: #2ecc71;">
                     <strong style="display:block; color:#2ecc71; margin-bottom:5px;">FLEET STATUS</strong>
-                    All trucks reached destination safely. 100% efficiency.
+                    Safe operations. 100% efficiency maintained.
                 </div>
-                <div class="indicator" style="border-left-color: #ff8c00;">
-                    <strong style="display:block; color:#ff8c00; margin-bottom:5px;">SYSTEM UPDATE</strong>
-                    Voice confirmation and Live logs integrated in Load Entry.
+                <div class="indicator" style="border-left-color: #ffd700;">
+                    <strong style="display:block; color:#ffd700; margin-bottom:5px;">SYSTEM UPDATE</strong>
+                    Cloud storage sync and Voice AI active.
                 </div>
             </div>
         </div>
 
         <div id="bill-management-section" class="hidden">
-            <h2 style="margin-bottom: 10px;"><i class="fas fa-file-invoice"></i> Bill Management</h2>
-            <p style="color: #ccc; margin-bottom: 25px;">Create professional digital bills or view your history.</p>
+            <h2 style="margin-bottom: 10px; color: #ffd700;"><i class="fas fa-file-invoice"></i> Bill Management</h2>
+            <p style="color: #ccc; margin-bottom: 25px;">Generate professional tax invoices instantly.</p>
             
             <div class="glass-panel" style="max-width: 600px; display: flex; flex-direction: column; gap: 20px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <a href="/create_bill" class="btn-primary btn-success">
+                    <a href="/create_bill" class="btn-primary">
                         <i class="fas fa-plus-circle"></i> Create New Bill
                     </a>
-                    <a href="/view_bills" class="btn-primary">
+                    <a href="/view_bills" class="btn-primary" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid #ffd700;">
                         <i class="fas fa-list-ul"></i> View All Bills
                     </a>
                 </div>
@@ -238,27 +273,27 @@
         <div id="load-section" class="hidden">
             <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start;">
                 <div>
-                    <h2>New Load Data Entry</h2>
+                    <h2 style="color: #ffd700;">New Load Entry</h2>
                     <div class="glass-panel">
                         <div class="input-group">
-                            <label>Destination State:</label>
-                            <input type="text" id="load_state" placeholder="e.g. Tamil Nadu" required>
+                            <label>Destination State</label>
+                            <input type="text" id="load_state" placeholder="e.g. Kerala / Tamil Nadu" required>
                         </div>
                         <div class="input-group">
-                            <label>Total Amount (₹):</label>
-                            <input type="number" id="load_amount" placeholder="Enter amount" required>
+                            <label>Total Amount (₹)</label>
+                            <input type="number" id="load_amount" placeholder="50000" required>
                         </div>
-                        <button onclick="handleLoadSave()" class="btn-primary btn-success" style="width: 100%;">Save Load Data</button>
+                        <button onclick="handleLoadSave()" class="btn-primary" style="width: 100%;">Save Load Data</button>
                     </div>
                 </div>
 
                 <div>
-                    <h2>Recent Load Entries</h2>
+                    <h2 style="color: #ffd700;">Recent History</h2>
                     <div class="glass-panel">
                         <table class="entry-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th> <th>Destination State</th>
+                                    <th>Date</th> <th>Destination</th>
                                     <th>Amount (₹)</th>
                                 </tr>
                             </thead>
@@ -297,10 +332,7 @@
             .then(data => {
                 let totalAmount = 0;
                 let activeLoads = data.length;
-                
-                data.forEach(entry => {
-                    totalAmount += parseFloat(entry.amount || 0);
-                });
+                data.forEach(entry => { totalAmount += parseFloat(entry.amount || 0); });
 
                 let profit = totalAmount * 0.4;
                 let fuel = totalAmount * 0.15;
@@ -343,7 +375,8 @@
             .then(res => {
                 loadSavedData();
                 updateDashboardStats();
-                let msg = new SpeechSynthesisUtterance(state + " data saved to cloud.");
+                // Voice Confirmation
+                let msg = new SpeechSynthesisUtterance(state + " details saved successfully Muniyappan.");
                 window.speechSynthesis.speak(msg);
                 document.getElementById('load_state').value = "";
                 document.getElementById('load_amount').value = "";
@@ -351,19 +384,14 @@
         }
 
         function handleResetStats() {
-            if(confirm("Confirm: Dashboard data and history reset pannatuma Pandi? New entries mattum thaan save aagum.")) {
+            if(confirm("Confirm: History reset pannatuma Pandi?")) {
                 fetch('/reset_stats', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('stat-profit').innerText = "₹ 0";
-                    document.getElementById('stat-revenue').innerText = "₹ 0";
-                    document.getElementById('stat-loads').innerText = "0";
-                    document.getElementById('stat-fuel').innerText = "₹ 0";
-                    document.getElementById('loadTableBody').innerHTML = "";
-
-                    let msg = new SpeechSynthesisUtterance("Database reset successfully");
+                    updateDashboardStats();
+                    loadSavedData();
+                    let msg = new SpeechSynthesisUtterance("System stats reset completed.");
                     window.speechSynthesis.speak(msg);
-                    alert(data.message);
                 });
             }
         }

@@ -5,14 +5,11 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-app.secret_key = "jashika_transport_key_123"
+# Secure key - Idha maathina ella session-um automatic-ah logout aagidum
+app.secret_key = "jashika_transport_key_123_secure"
 
 # --- MongoDB Atlas Connection ---
 uri = "mongodb+srv://rural_admin:munik123@cluster0.gmmemqo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-client = None
-db = None
-loads_col = None
 
 try:
     client = MongoClient(uri, tlsCAFile=certifi.where())
@@ -27,6 +24,8 @@ except Exception as e:
 
 @app.route('/')
 def home():
+    # Muniyappan, inga dhaan check panrom: 
+    # User munaadiyae login panni irundha mattum dashboard anupuvom
     if 'user' in session:
         return redirect(url_for('bill_entry'))
     return render_template('login.html')
@@ -34,7 +33,9 @@ def home():
 @app.route('/login', methods=['POST'])
 def login():
     password = request.form.get('password')
+    # Password check
     if password == 'pandi':
+        session.permanent = True # Browser-ah close panna kooda session irukkum (optional)
         session['user'] = 'pandi'
         return redirect(url_for('bill_entry'))
     else:
@@ -43,11 +44,15 @@ def login():
 
 @app.route('/logout')
 def logout():
+    # ❌ Logout pannum podhu session-ah clean panrom
     session.pop('user', None)
+    session.clear() 
+    flash("Successfully Logged Out", "voice")
     return redirect(url_for('home'))
 
 @app.route('/bill_entry')
 def bill_entry():
+    # Security: Login pannala-na veliya thallidum
     if 'user' not in session:
         return redirect(url_for('home'))
     return render_template('index.html')
@@ -58,7 +63,6 @@ def create_bill():
         return redirect(url_for('home'))
     return render_template('create_bill.html')
 
-# --- PUDHU QUOTATION ROUTE (Ippo Add Panniyathu) ---
 @app.route('/quotation')
 def quotation():
     if 'user' not in session:
@@ -70,7 +74,6 @@ def save_bill():
     if 'user' not in session:
         return redirect(url_for('home'))
         
-    global loads_col
     bill_data = {
         "invoice_no": request.form.get('inv_no'),
         "date": request.form.get('date'),
@@ -85,7 +88,6 @@ def save_bill():
 
     try:
         loads_col.insert_one(bill_data)
-        # Voice alert-kaga 'voice' nu category kudukrom
         flash("Manual Bill Saved Successfully", "voice")
         return redirect(url_for('view_bills'))
     except Exception as e:
@@ -95,7 +97,6 @@ def save_bill():
 def view_bills():
     if 'user' not in session:
         return redirect(url_for('home'))
-    global loads_col
     try:
         all_loads = list(loads_col.find())
         return render_template('view_bills.html', loads=all_loads)
@@ -104,8 +105,8 @@ def view_bills():
 
 @app.route('/save_load_permenant', methods=['POST'])
 def save_load_permenant():
-    if 'user' not in session: return jsonify({"message": "Unauthorized"}), 401
-    global loads_col
+    if 'user' not in session: 
+        return jsonify({"message": "Unauthorized"}), 401
     data = request.json
     load_entry = {
         "destination": data.get('state'),
@@ -121,7 +122,7 @@ def save_load_permenant():
 
 @app.route('/get_loads', methods=['GET'])
 def get_loads():
-    global loads_col
+    # API route-kum session check irundha nalladhu
     try:
         loads = list(loads_col.find({"type": "load_entry"}, {"_id": 0}).sort("_id", -1).limit(10))
         return jsonify(loads)
@@ -130,8 +131,8 @@ def get_loads():
 
 @app.route('/reset_stats', methods=['POST'])
 def reset_stats():
-    if 'user' not in session: return jsonify({"status": "error"}), 401
-    global loads_col
+    if 'user' not in session: 
+        return jsonify({"status": "error"}), 401
     try:
         loads_col.delete_many({"type": "load_entry"}) 
         return jsonify({"status": "success", "message": "Records cleared!"})
@@ -142,7 +143,7 @@ def reset_stats():
 def add_load():
     if 'user' not in session:
         return redirect(url_for('home'))
-    global loads_col
+    
     state = request.form.get('state')
     amount = request.form.get('amount')
 
@@ -154,7 +155,6 @@ def add_load():
                 "date": datetime.now().strftime("%d-%m-%Y"),
                 "type": "load_entry"
             })
-            # Voice alert category
             flash("Data Successfully Saved to Cloud", "voice")
             return redirect(url_for('view_bills'))
         except Exception as e:
@@ -163,7 +163,5 @@ def add_load():
     flash("Please fill all fields!")
     return redirect(url_for('bill_entry'))
 
-# --- Final Step (Pop-up Fix) ---
 if __name__ == '__main__':
-    # Local-la run panna host '127.0.0.1' use panrom. 
     app.run(host='127.0.0.1', port=5000, debug=True)
