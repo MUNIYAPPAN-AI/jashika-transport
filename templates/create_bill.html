@@ -10,11 +10,11 @@
         #bill-to-print { 
             background: white !important; 
             width: 800px; 
-            padding: 20px; /* Padding reduced to save space */
+            padding: 20px; 
             border: 2px solid #000; 
             box-sizing: border-box;
             color: black !important;
-            min-height: 1020px; /* Adjusted for A4 fit */
+            min-height: 1020px; 
             display: flex;
             flex-direction: column;
         }
@@ -42,8 +42,10 @@
         .tax-input { width: 40px; border-bottom: 1px dashed #ccc; text-align: center; font-weight: bold; }
 
         .items-table { width: 100%; border-collapse: collapse; border: 1px solid #000; margin-top: -1px; flex-grow: 1; }
-        .items-table th, .items-table td { border: 1px solid #000; padding: 8px; color: black !important; font-size: 13px; }
-        .row-height { height: 380px; vertical-align: top; } /* Reduced height to keep border on page 1 */
+        .items-table th, .items-table td { border: 1px solid #000; padding: 4px 8px; color: black !important; font-size: 13px; }
+        
+        .sno-row { height: 35px; } 
+        .amount-field { text-align: right; font-weight: bold; font-size: 14px; width: 100%; }
 
         .bottom-grid { display: grid; grid-template-columns: 1.5fr 1.2fr; border: 2px solid #000; border-top: none; }
         .bank-info { padding: 12px; font-size: 11px; border-right: 2px solid #000; background: #fafafa !important; }
@@ -104,12 +106,19 @@
                     <th width="30%">Amount (₹)</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr class="row-height">
-                    <td align="center">01</td>
-                    <td><textarea id="particulars" placeholder="Type loading details..." style="height: 100%;"></textarea></td>
-                    <td><input type="number" id="base_amount" oninput="doCalculate()" placeholder="0.00" style="text-align:right; font-weight:bold; font-size: 15px;"></td>
-                </tr>
+            <tbody id="table-body">
+                <tr class="sno-row"><td align="center">01</td><td><input type="text" placeholder="Type loading details..."></td><td><input type="number" class="amount-field" oninput="doCalculate()" placeholder="0.00"></td></tr>
+                <tr class="sno-row"><td align="center">02</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">03</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">04</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">05</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">06</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">07</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">08</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">09</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">10</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">11</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
+                <tr class="sno-row"><td align="center">12</td><td><input type="text"></td><td><input type="number" class="amount-field" oninput="doCalculate()"></td></tr>
             </tbody>
         </table>
 
@@ -195,41 +204,41 @@
         }
 
         function doCalculate() {
-            let amount = parseFloat(document.getElementById('base_amount').value) || 0;
+            // Calculate Sum of all Amount inputs
+            let amountInputs = document.querySelectorAll('.amount-field');
+            let subTotal = 0;
+            amountInputs.forEach(input => {
+                subTotal += parseFloat(input.value) || 0;
+            });
+
             let cp = parseFloat(document.getElementById('cgst_p').value) || 0;
             let sp = parseFloat(document.getElementById('sgst_p').value) || 0;
             let ip = parseFloat(document.getElementById('igst_p').value) || 0;
             let ro = parseFloat(document.getElementById('round_off').value) || 0;
 
-            let cgst = amount * (cp / 100);
-            let sgst = amount * (sp / 100);
-            let igst = amount * (ip / 100);
-            let total = amount + cgst + sgst + igst + ro;
+            let cgst = subTotal * (cp / 100);
+            let sgst = subTotal * (sp / 100);
+            let igst = subTotal * (ip / 100);
+            let grandTotal = subTotal + cgst + sgst + igst + ro;
 
-            document.getElementById('st').innerText = amount.toFixed(2);
+            document.getElementById('st').innerText = subTotal.toFixed(2);
             document.getElementById('cgst_amt').innerText = cgst.toFixed(2);
             document.getElementById('sgst_amt').innerText = sgst.toFixed(2);
             document.getElementById('igst_amt').innerText = igst.toFixed(2);
-            document.getElementById('gt').innerText = "₹ " + total.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('gt_words').innerText = numberToWords(total);
+            document.getElementById('gt').innerText = "₹ " + grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('gt_words').innerText = numberToWords(grandTotal);
         }
 
         async function downloadPDF() {
             const element = document.getElementById('bill-to-print');
             const invName = document.getElementById('inv_no').value || 'Bill';
-            
-            // Voice confirmation [cite: 2026-02-21]
             window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bill PDF generate aaguthu."));
 
             const opt = {
-                margin: [0, 0, 5, 0], // Small bottom margin to ensure no overflow
+                margin: [0, 0, 5, 0], 
                 filename: invName + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    scrollY: 0
-                },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
