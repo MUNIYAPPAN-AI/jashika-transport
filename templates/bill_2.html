@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice - Jashika Transport</title>
+    <style>
+        /* --- DASHBOARD LUXURY STYLE --- */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .navbar {
+            background: #1a1a1a;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffcc00;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #ffcc00;
+        }
+
+        /* --- BILL CONTAINER STYLE --- */
+        .bill-wrapper {
+            background: white;
+            width: 850px;
+            margin: 30px auto;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .company-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #1a1a1a;
+        }
+
+        .address-bar {
+            font-size: 12px;
+            margin: 2px 0;
+        }
+
+        .quotation-title {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 20px;
+            background: #1a1a1a;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .editable-cell {
+            width: 95%;
+            border: none;
+            text-align: center;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+        }
+
+        .bottom-container {
+            display: flex;
+            border: 1px solid #000;
+            border-top: none;
+        }
+
+        .bank-details {
+            width: 55%;
+            padding: 15px;
+            border-right: 1px solid #000;
+            line-height: 1.6;
+            font-size: 12px;
+        }
+
+        .total-section {
+            width: 45%;
+        }
+
+        .total-row {
+            display: flex;
+            border-bottom: 1px solid #000;
+        }
+
+        .label {
+            width: 60%;
+            padding: 8px;
+            text-align: left;
+            border-right: 1px solid #000;
+            font-weight: bold;
+        }
+
+        .value {
+            width: 40%;
+            padding: 8px;
+            text-align: right;
+        }
+
+        .grand-total {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .words-section {
+            border: 1px solid #000;
+            border-top: none;
+            padding: 15px;
+            font-style: italic;
+            background: #fdfdfd;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+
+        .sign-box {
+            text-align: center;
+            width: 250px;
+        }
+
+        .auth-sign {
+            border-top: 1px dashed #000;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        .save-btn:hover { background-color: #218838; }
+
+        @media print {
+            .no-print, .navbar { display: none !important; }
+            body { background: white; }
+            .bill-wrapper { box-shadow: none; margin: 0; width: 100%; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar no-print">
+        <div class="logo">JT | JASHIKA TRANSPORT</div>
+        <div class="nav-links">
+            <a href="/">HOME</a>
+            <a href="/bill_management">BILL MANAGEMENT</a>
+            <a href="/load_entry">LOAD ENTRY</a>
+            <a href="/quotation">QUOTATION</a>
+            <a class="active">CREATE BILL</a>
+        </div>
+    </nav>
+
+    <div class="bill-wrapper">
+        <form action="/save_bill2" method="POST">
+            <div class="header">
+                <p style="text-align: left; margin: 0; font-weight: bold;">MOBILE: 7092701779</p>
+                <h1 class="company-name">JASHIKA TRANSPORT</h1>
+                <p class="address-bar">( ALL OVER INDIA SERVICES )</p>
+                <p class="address-bar">29, KVR NAGAR, KODIKAMBAM GROUND, TIRUPPUR - 641604</p>
+                <p class="address-bar">E-MAIL: chellapandi953@gmail.com</p>
+                <p style="font-weight: bold; margin: 5px 0;">GSTIN: 33CFDPC1325Q1ZM</p>
+                <span class="quotation-title">TAX INVOICE</span>
+            </div>
+
+            <div class="info-section">
+                <p><strong>TO:</strong> <input type="text" name="customer_name" class="editable-cell" style="width: 400px; border-bottom: 1px dotted #000; text-align: left;" placeholder="Enter Customer Name"></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th width="5%">S.NO</th>
+                        <th>STARTING LOCATION</th>
+                        <th>UNLOADING</th>
+                        <th>WEIGHT</th>
+                        <th>CONTAINER</th>
+                        <th>RATE</th>
+                        <th>AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody id="bill-body">
+                    <tr><td>1</td><td><input type="text" name="sl1" class="editable-cell"></td><td><input type="text" name="un1" class="editable-cell"></td><td><input type="text" name="wt1" class="editable-cell"></td><td><input type="text" name="tc1" class="editable-cell"></td><td><input type="text" name="rate1" class="editable-cell"></td><td><input type="number" name="amt1" class="editable-cell line-amt" oninput="calculateTotal()"></td></tr>
+                    <tr><td>2</td><td><input type="text" name="sl2" class="editable-cell"></td><td><input type="text" name="un2" class="editable-cell"></td><td><input type="text" name="wt2" class="editable-cell"></td><td><input type="text" name="tc2" class="editable-cell"></td><td><input type="text" name="rate2" class="editable-cell"></td><td><input type="number" name="amt2" class="editable-cell line-amt" oninput="calculateTotal()"></td></tr>
+                    <tr><td>3</td><td><input type="text" name="sl3" class="editable-cell"></td><td><input type="text" name="un3" class="editable-cell"></td><td><input type="text" name="wt3" class="editable-cell"></td><td><input type="text" name="tc3" class="editable-cell"></td><td><input type="text" name="rate3" class="editable-cell"></td><td><input type="number" name="amt3" class="editable-cell line-amt" oninput="calculateTotal()"></td></tr>
+                    <tr><td>4</td><td><input type="text" name="sl4" class="editable-cell"></td><td><input type="text" name="un4" class="editable-cell"></td><td><input type="text" name="wt4" class="editable-cell"></td><td><input type="text" name="tc4" class="editable-cell"></td><td><input type="text" name="rate4" class="editable-cell"></td><td><input type="number" name="amt4" class="editable-cell line-amt" oninput="calculateTotal()"></td></tr>
+                </tbody>
+            </table>
+
+            <div class="bottom-container">
+                <div class="bank-details">
+                    <strong>BANK DETAILS:</strong><br>
+                    SBI | CHELLAPANDI | 39679976538<br>
+                    IFS Code: SBIN0000935<br><br>
+                    <small><strong>Declaration:</strong> Goods once sold will not be taken back.</small>
+                </div>
+                <div class="total-section">
+                    <div class="total-row"><div class="label">Sub Total</div><div class="value"><input type="text" id="sub_total" name="sub_total" class="editable-cell" readonly value="0.00"></div></div>
+                    <div class="total-row"><div class="label">CGST (%)</div><div class="value"><input type="number" id="cgst_per" name="cgst_per" class="editable-cell" placeholder="0" oninput="calculateTotal()"></div></div>
+                    <div class="total-row"><div class="label">SGST (%)</div><div class="value"><input type="number" id="sgst_per" name="sgst_per" class="editable-cell" placeholder="0" oninput="calculateTotal()"></div></div>
+                    <div class="total-row"><div class="label">IGST (%)</div><div class="value"><input type="number" id="igst_per" name="igst_per" class="editable-cell" placeholder="0" oninput="calculateTotal()"></div></div>
+                    <div class="total-row"><div class="label">Round Off</div><div class="value"><input type="text" id="round_off" name="round_off" class="editable-cell" value="0.00" oninput="calculateTotal()"></div></div>
+                    <div class="total-row grand-total"><div class="label">Grand Total</div><div class="value">₹ <input type="text" id="grand_total" name="grand_total" class="editable-cell" style="font-weight: bold; width: 80px;" readonly value="0.00"></div></div>
+                </div>
+            </div>
+
+            <div class="words-section">
+                <strong>Rupees in Words:</strong> <input type="text" id="amt_words" name="amt_words" class="editable-cell" style="width: 80%; text-align: left;" value="Zero Only">
+            </div>
+
+            <div class="signature-section">
+                <div class="sign-box"><br><br><p>Customer's Signature</p></div>
+                <div class="sign-box">
+                    <p>For <strong>JASHIKA TRANSPORT</strong></p>
+                    <div class="auth-sign">Authorised Signatory</div>
+                </div>
+            </div>
+
+            <div class="btn-container no-print">
+                <button type="submit" class="save-btn">SAVE TO DATABASE</button>
+                <button type="button" class="save-btn" style="background-color: #333;" onclick="window.print()">PRINT INVOICE</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            let subTotal = 0;
+            document.querySelectorAll('.line-amt').forEach(input => {
+                subTotal += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('sub_total').value = subTotal.toFixed(2);
+
+            let cgst = (subTotal * (parseFloat(document.getElementById('cgst_per').value) || 0)) / 100;
+            let sgst = (subTotal * (parseFloat(document.getElementById('sgst_per').value) || 0)) / 100;
+            let igst = (subTotal * (parseFloat(document.getElementById('igst_per').value) || 0)) / 100;
+            let roundOff = parseFloat(document.getElementById('round_off').value) || 0;
+
+            let grandTotal = subTotal + cgst + sgst + igst + roundOff;
+            document.getElementById('grand_total').value = grandTotal.toFixed(2);
+        }
+    </script>
+</body>
+</html>
